@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إلى بابا.. رسالة اعتذار وتقدير</title>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Cairo', sans-serif;
+      background: #03060e;
+      color: #fff;
+    }
+
+    /* ==================== 1. الدخلة الفخمة ==================== */
+    #introBackdrop {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 115%, rgba(212, 175, 55, 0.08) 0%, rgba(16, 29, 58, 0.45) 42%, #050914 82%);
+      transition: background 2.5s ease, opacity 1s ease;
+      z-index: 1;
+    }
+
+    #introBackdrop.dawn-glow {
+      background:
+        radial-gradient(ellipse at 50% 108%, rgba(244, 208, 63, 0.34) 0%, rgba(184, 134, 11, 0.14) 32%, rgba(13, 27, 51, 0.88) 68%, #040812 100%);
+    }
+
+    #openingOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+
+    #openingOverlay.hide {
+      opacity: 0;
+      transform: scale(1.04);
+      pointer-events: none;
+    }
+
+    .opening-crest {
+      font-size: 1.5rem;
+      color: #f4d03f;
+      letter-spacing: 8px;
+      margin-bottom: 14px;
+    }
+
+    .opening-title {
+      font-family: 'Amiri', serif;
+      font-size: clamp(1.75rem, 4.2vw, 2.7rem);
+      font-weight: 700;
+      line-height: 1.55;
+      max-width: 680px;
+      background: linear-gradient(90deg, #f9e79f, #f4d03f, #fff8dc, #d4af37);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 6px 24px rgba(0, 0, 0, 0.75));
+    }
+
+    .opening-sub {
+      margin-top: 14px;
+      font-size: 1rem;
+      color: rgba(235, 242, 255, 0.85);
+    }
+
+    /* ==================== خلفية المجموعة الشمسية الواقعية التفاعلية ==================== */
+    #solarCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 4;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1.2s ease;
+      background: radial-gradient(circle at 50% 50%, #0b1428 0%, #03050c 72%, #000000 100%);
+    }
+
+    #solarCanvas.active {
+      opacity: 1;
+      pointer-events: auto;
+      cursor: grab;
+    }
+
+    #solarCanvas.active.hovering-planet {
+      cursor: pointer;
+    }
+
+    #solarCanvas.active:active {
+      cursor: grabbing;
+    }
+
+    .solar-controls-badge {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 15;
+      background: rgba(10, 18, 36, 0.86);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(244, 208, 63, 0.48);
+      color: #f4d03f;
+      padding: 8px 24px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.7);
+      white-space: nowrap;
+    }
+
+    .solar-controls-badge.show {
+      display: flex;
+    }
+
+    /* ==================== لوحة عرض الكوكب الكبير الواقعي وتدويره + معلوماته الفخمة ==================== */
+    .planet-inspect-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 28;
+      background:
+        radial-gradient(circle at 28% 50%, rgba(244, 208, 63, 0.08), transparent 45%),
+        radial-gradient(circle at 35% 50%, rgba(16, 32, 64, 0.94), rgba(3, 6, 14, 0.98));
+      backdrop-filter: blur(14px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 28px;
+      gap: 40px;
+      flex-wrap: wrap;
+      overflow-y: auto;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    .planet-inspect-overlay.show {
+      display: flex;
+    }
+
+    .planet-stage-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    #planetSpinCanvas {
+      width: min(460px, 88vw);
+      height: min(460px, 88vw);
+      border-radius: 50%;
+      cursor: grab;
+      box-shadow:
+        0 0 85px rgba(244, 208, 63, 0.22),
+        0 25px 65px rgba(0, 0, 0, 0.9),
+        inset 0 0 36px rgba(0, 0, 0, 0.65);
+      touch-action: none;
+    }
+
+    #planetSpinCanvas:active {
+      cursor: grabbing;
+    }
+
+    .spin-hint-pill {
+      background: rgba(244, 208, 63, 0.14);
+      border: 1.5px solid rgba(244, 208, 63, 0.48);
+      color: #ffd700;
+      padding: 7px 20px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+    }
+
+    .planet-info-card {
+      width: min(450px, 100%);
+      background:
+        radial-gradient(circle at 100% 0%, rgba(244, 208, 63, 0.14), transparent 55%),
+        linear-gradient(155deg, rgba(16, 28, 52, 0.96), rgba(7, 13, 25, 0.99));
+      border: 2px solid #f4d03f;
+      border-radius: 26px;
+      padding: 26px;
+      box-shadow:
+        0 26px 70px rgba(0, 0, 0, 0.95),
+        0 0 38px rgba(244, 208, 63, 0.25),
+        inset 0 0 24px rgba(244, 208, 63, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .planet-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1.5px solid rgba(244, 208, 63, 0.34);
+      padding-bottom: 13px;
+    }
+
+    .planet-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .planet-color-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #fff3b0;
+      box-shadow: 0 0 14px rgba(255, 215, 0, 0.7);
+    }
+
+    .planet-name-ar {
+      font-family: 'Amiri', serif;
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #ffd700;
+      line-height: 1.15;
+    }
+
+    .planet-order-tag {
+      background: linear-gradient(135deg, rgba(244, 208, 63, 0.22), rgba(184, 134, 11, 0.12));
+      border: 1px solid rgba(244, 208, 63, 0.55);
+      color: #ffd700;
+      font-size: 0.82rem;
+      font-weight: 800;
+      padding: 5px 14px;
+      border-radius: 999px;
+    }
+
+    .planet-desc-text {
+      font-size: 1rem;
+      line-height: 1.85;
+      color: #edf2fc;
+    }
+
+    .planet-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .planet-stat-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(244, 208, 63, 0.22);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .planet-stat-label {
+      font-size: 0.76rem;
+      color: rgba(220, 230, 247, 0.72);
+    }
+
+    .planet-stat-val {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #ffd700;
+    }
+
+    .planet-highlight-box {
+      background: rgba(244, 208, 63, 0.08);
+      border-right: 3.5px solid #ffd700;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      color: #fff6d6;
+    }
+
+    .planet-highlight-box strong {
+      color: #ffd700;
+    }
+
+    .btn-back-solar {
+      align-self: stretch;
+      padding: 12px 18px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #fff099, #f4d03f 50%, #b8860b 100%);
+      color: #09101f;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.98rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(244, 208, 63, 0.32);
+      transition: transform 0.2s ease;
+    }
+
+    .btn-back-solar:hover {
+      transform: translateY(-2px);
+    }
+
+    /* ==================== 2. الشاشات ==================== */
+    .screen {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 20px;
+      pointer-events: none;
+    }
+
+    .screen.show {
+      display: flex;
+      animation: fadeIn 0.7s ease forwards;
+    }
+
+    .screen.hidden-for-focus {
+      display: none !important;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* بطاقة الباسورد */
+    .card {
+      pointer-events: auto;
+      background: rgba(12, 22, 42, 0.88);
+      backdrop-filter: blur(14px);
+      border: 1.5px solid rgba(212, 175, 55, 0.6);
+      border-radius: 24px;
+      padding: 36px 26px 28px;
+      width: 100%;
+      max-width: 370px;
+      text-align: center;
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.78), 0 0 30px rgba(212, 175, 55, 0.18);
+    }
+
+    .heart-top {
+      width: 72px;
+      height: 72px;
+      margin: -70px auto 14px;
+      border-radius: 50%;
+      background: #14223d;
+      border: 2px solid #f4d03f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      box-shadow: 0 0 24px rgba(244, 208, 63, 0.5);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+    }
+
+    .card h2 {
+      font-family: 'Amiri', serif;
+      color: #f4d03f;
+      font-size: 1.85rem;
+      margin-bottom: 6px;
+    }
+
+    .card p {
+      color: #dce4f0;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    .pin-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      direction: ltr;
+      margin-bottom: 18px;
+    }
+
+    .pin {
+      width: 50px;
+      height: 56px;
+      border-radius: 12px;
+      border: 1.5px solid #d4af37;
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffd700;
+      font-size: 1.6rem;
+      font-weight: bold;
+      text-align: center;
+      outline: none;
+    }
+
+    .pin:focus {
+      background: rgba(212, 175, 55, 0.18);
+      box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+    }
+
+    .btn-gold {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f4d03f, #b8860b);
+      color: #0b132b;
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    #err {
+      color: #ff7675;
+      font-size: 0.88rem;
+      margin-top: 10px;
+      min-height: 20px;
+    }
+
+    /* ==================== 3. صندوق العهد الملكي ==================== */
+    .vault-hint {
+      pointer-events: none;
+      color: #f4d03f;
+      font-size: 1.05rem;
+      margin-bottom: 18px;
+      background: rgba(8, 14, 28, 0.78);
+      backdrop-filter: blur(6px);
+      padding: 6px 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(244, 208, 63, 0.35);
+    }
+
+    .royal-vault-wrap {
+      pointer-events: auto;
+      position: relative;
+      width: 320px;
+      height: 205px;
+      cursor: pointer;
+      transition: transform 0.35s ease;
+    }
+
+    .royal-vault-wrap:hover {
+      transform: translateY(-6px) scale(1.03);
+    }
+
+    .royal-vault {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 22px;
+      background: linear-gradient(155deg, rgba(23, 35, 58, 0.88) 0%, rgba(9, 15, 28, 0.92) 58%, rgba(28, 43, 71, 0.88) 100%);
+      backdrop-filter: blur(10px);
+      border: 2.5px solid #d4af37;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9), 0 0 40px rgba(212, 175, 55, 0.28);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px;
+    }
+
+    .vault-inner-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 45%, rgba(255, 223, 115, 0.45), rgba(212, 175, 55, 0.12) 55%, transparent 80%);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+
+    .royal-vault-wrap.unlocked .vault-inner-glow {
+      opacity: 1;
+    }
+
+    .vault-lid-bar {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(244, 208, 63, 0.32);
+    }
+
+    .vault-rivet {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff3b0, #b8860b);
+    }
+
+    .vault-crest-badge {
+      font-family: 'Amiri', serif;
+      font-size: 1.05rem;
+      color: #f4d03f;
+      letter-spacing: 2px;
+    }
+
+    .vault-lock-core {
+      position: relative;
+      z-index: 2;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #ffd700 0%, #b8860b 72%, #6e4f05 100%);
+      border: 2px solid #fff3b0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      color: #161003;
+      transition: transform 0.5s ease;
+    }
+
+    .royal-vault-wrap.unlocked .vault-lock-core {
+      transform: scale(1.15) rotate(12deg);
+    }
+
+    .vault-apology-tag {
+      position: relative;
+      z-index: 2;
+      background: linear-gradient(135deg, rgba(244, 208, 63, 0.2), rgba(184, 134, 11, 0.12));
+      border: 1.5px solid #f4d03f;
+      border-radius: 999px;
+      padding: 4px 32px;
+    }
+
+    .vault-apology-tag span {
+      font-family: 'Amiri', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #fff3b0, #f4d03f, #d4af37);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ==================== 4. رسالة الاعتذار الكبيرة الفخمة + شريط السكرول الذهبي الفخم ==================== */
+    #modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 16, 0.82);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+
+    #modal.show {
+      display: flex;
+    }
+
+    .grand-letter-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 710px;
+      height: 92vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .royal-tablet {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(244, 208, 63, 0.22), transparent 62%),
+        linear-gradient(165deg, rgba(18, 31, 56, 0.95) 0%, rgba(8, 15, 29, 0.97) 55%, rgba(22, 38, 69, 0.95) 100%);
+      color: #f8fafc;
+      border-radius: 28px;
+      padding: 42px 36px 108px;
+      box-shadow: 0 32px 90px rgba(0, 0, 0, 0.95), 0 0 50px rgba(212, 175, 55, 0.34);
+      border: 2.5px solid #d4af37;
+      scrollbar-width: thin;
+      scrollbar-color: #f4d03f rgba(255, 255, 255, 0.04);
+    }
+
+    .royal-tablet::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .royal-tablet::-webkit-scrollbar-track {
+      background: rgba(6, 12, 24, 0.55);
+      border-radius: 999px;
+      margin: 18px 4px;
+      border: 1px solid rgba(244, 208, 63, 0.14);
+    }
+
+    .royal-tablet::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #fff3b0 0%, #f4d03f 45%, #a8790b 100%);
+      border-radius: 999px;
+      border: 2px solid rgba(12, 22, 42, 0.85);
+      box-shadow: 0 0 12px rgba(244, 208, 63, 0.65);
+    }
+
+    .royal-tablet::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #ffffff 0%, #ffd700 50%, #c99312 100%);
+      box-shadow: 0 0 16px rgba(255, 215, 0, 0.9);
+    }
+
+    .tablet-header {
+      text-align: center;
+      padding-bottom: 20px;
+      margin-bottom: 22px;
+      border-bottom: 1.5px solid rgba(244, 208, 63, 0.38);
+    }
+
+    .tablet-crown {
+      font-size: 2.7rem;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .tablet-header h1 {
+      font-family: 'Amiri', serif;
+      font-size: clamp(2.1rem, 4.5vw, 2.75rem);
+      color: #f4d03f;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .tribute-meter {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(244, 208, 63, 0.32);
+      border-radius: 18px;
+      padding: 14px 20px;
+      margin-bottom: 24px;
+    }
+
+    .tribute-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1rem;
+      color: #f4d03f;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .tribute-track {
+      width: 100%;
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .tribute-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #b8860b, #f4d03f, #fff3b0);
+      border-radius: 999px;
+    }
+
+    .tablet-lines {
+      font-family: 'Amiri', serif;
+      font-size: clamp(1.55rem, 3vw, 1.95rem);
+      line-height: 1.95;
+    }
+
+    .t-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 13px 18px;
+      margin-bottom: 11px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(244, 208, 63, 0.18);
+    }
+
+    .t-text {
+      text-align: right;
+      flex: 1;
+    }
+
+    .t-emoji {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+
+    .accent-gold {
+      color: #ffd700;
+      font-weight: 700;
+    }
+
+    .tablet-footer {
+      margin-top: 26px;
+      padding-top: 20px;
+      border-top: 1.5px solid rgba(244, 208, 63, 0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .t-sig {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'Amiri', serif;
+      font-size: 1.75rem;
+      color: #f4d03f;
+      font-weight: 700;
+    }
+
+    .btn-close {
+      align-self: center;
+      padding: 12px 42px;
+      border-radius: 999px;
+      border: 1.5px solid #d4af37;
+      background: linear-gradient(135deg, #f4d03f, #b8860b);
+      color: #09101f;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .floating-nav-arrow {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 65;
+      min-width: 270px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      padding: 11px 22px 10px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(16, 28, 52, 0.96), rgba(8, 15, 29, 0.98));
+      border: 2px solid #f4d03f;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.88), 0 0 26px rgba(244, 208, 63, 0.45);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .nav-arrow-top-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .arrow-badge-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffd700, #b8860b);
+      color: #09101f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 900;
+      box-shadow: 0 0 14px rgba(255, 215, 0, 0.55);
+      transition: transform 0.35s ease;
+      flex-shrink: 0;
+    }
+
+    .floating-nav-arrow.at-start .arrow-badge-icon,
+    .floating-nav-arrow.at-middle .arrow-badge-icon {
+      animation: bounceDown 1.35s infinite ease-in-out;
+    }
+
+    .floating-nav-arrow.at-end {
+      border-color: #ffe885;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 232, 133, 0.6);
+    }
+
+    .floating-nav-arrow.at-end .arrow-badge-icon {
+      transform: rotate(180deg);
+      animation: none;
+    }
+
+    @keyframes bounceDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(4px); }
+    }
+
+    .arrow-status-text {
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+      line-height: 1.25;
+      flex: 1;
+    }
+
+    .arrow-main-label {
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #ffd700;
+    }
+
+    .arrow-sub-label {
+      font-size: 0.78rem;
+      color: rgba(240, 244, 255, 0.85);
+    }
+
+    .scroll-progress-bar {
+      width: 100%;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+    }
+
+    .scroll-progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #b8860b, #ffd700, #fff3b0);
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+      transition: width 0.12s linear;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="introBackdrop"></div>
+  <canvas id="solarCanvas"></canvas>
+
+  <div class="solar-controls-badge" id="solarBadge">
+    <span>🪐</span>
+    <span>دوس على أي كوكب لتكبيره وتدويره في لوحة العرض • اسحب للتحريك • البكرة للتقريب</span>
+  </div>
+
+  <!-- لوحة عرض الكوكب الكبير الواقعي وتدويره + معلوماته الفخمة -->
+  <div class="planet-inspect-overlay" id="planetInspectOverlay">
+    <div class="planet-stage-box">
+      <canvas id="planetSpinCanvas" width="460" height="460"></canvas>
+      <div class="spin-hint-pill">🔄 اسحب الكوكب بالماوس أو اللمس لتحريكه 360° في كل الاتجاهات</div>
+    </div>
+
+    <div class="planet-info-card">
+      <div class="planet-card-header">
+        <div class="planet-title-group">
+          <span class="planet-color-dot" id="planetDot"></span>
+          <h3 class="planet-name-ar" id="planetNameAr">الأرض</h3>
+        </div>
+        <span class="planet-order-tag" id="planetOrderTag">الكوكب الثالث</span>
+      </div>
+
+      <p class="planet-desc-text" id="planetDescText"></p>
+
+      <div class="planet-stats-grid" id="planetStatsGrid"></div>
+
+      <div class="planet-highlight-box" id="planetHighlightBox"></div>
+
+      <button class="btn-back-solar" id="backToSolarBtn">العودة لرؤية المجموعة الشمسية كاملة</button>
+    </div>
+  </div>
+
+  <div id="openingOverlay">
+    <div class="opening-crest">✦ ❖ ✦</div>
+    <div class="opening-title">بعض الكلمات لا تُقال إلا لمن لهم في القلب مكانة لا تُبدَّل</div>
+    <div class="opening-sub">😔❤️رساله اعتذار ... لـ بابا</div>
+  </div>
+
+  <!-- شاشة الباسورد -->
+  <div class="screen" id="passScreen">
+    <div class="card">
+      <div class="heart-top">❤️</div>
+      <h2>رسالة خاصة ليك يا بابا</h2>
+      <p>أدخل كلمة السر ثم اضغط دخول أو Enter</p>
+      <div class="pin-row">
+        <input type="password" maxlength="1" class="pin" id="d1" />
+        <input type="password" maxlength="1" class="pin" id="d2" />
+        <input type="password" maxlength="1" class="pin" id="d3" />
+        <input type="password" maxlength="1" class="pin" id="d4" />
+      </div>
+      <button class="btn-gold" id="checkBtn">دخول</button>
+      <div id="err"></div>
+    </div>
+  </div>
+
+  <!-- صندوق العهد الملكي -->
+  <div class="screen" id="vaultScreen">
+    <div class="vault-hint">اضغط على الصندوق  لفتح الرسالة ✨</div>
+
+    <div class="royal-vault-wrap" id="vaultWrap">
+      <div class="royal-vault">
+        <div class="vault-inner-glow"></div>
+
+        <div class="vault-lid-bar">
+          <span class="vault-rivet"></span>
+          <span class="vault-crest-badge">✦ عهد واعتذار لـ بابا ✦</span>
+          <span class="vault-rivet"></span>
+        </div>
+
+        <div class="vault-lock-core" id="vaultLock">🔐</div>
+
+        <div class="vault-apology-tag">
+          <span>أنا آسف</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- رسالة الاعتذار الكبيرة الفخمة -->
+  <div id="modal">
+    <div class="grand-letter-wrapper">
+      <div class="royal-tablet" id="royalTablet">
+        <div class="tablet-header">
+          <span class="tablet-crown">👑</span>
+          <h1>إلى بابا الغالي.. سندي 😊💕 </h1>
+        </div>
+
+        <div class="tribute-meter">
+          <div class="tribute-top">
+            <span>مقامك وتقديرك في قلبي</span>
+            <span>100% ✦ أبدي</span>
+          </div>
+          <div class="tribute-track">
+            <div class="tribute-fill"></div>
+          </div>
+        </div>
+
+        <div class="tablet-lines">
+          <div class="t-line">
+            <span class="t-text">بابا حبيبي بكتبلك الكلمتين دول من جوا قلبي</span>
+            <span class="t-emoji">🤍</span>
+          </div>
+          <div class="t-line">
+            <span class="t-text"><span class="accent-gold">أنا آسف</span> على أي تصرف أو كلمة ضايقتك أو زعلتك مني</span>
+            <span class="t-emoji">😔</span>
+          </div>
+          <div class="t-line">
+            <span class="t-text">زعلك غالي عليّا أوي والدنيا بتضيق في عيني لما بحس إنك متضايق</span>
+            <span class="t-emoji">💔</span>
+          </div>
+          <div class="t-line">
+            <span class="t-text">عمري في حياتي ما كنت أقصد أزعلك أو أكون سبب في تعبك</span>
+            <span class="t-emoji">🥺</span>
+          </div>
+          <div class="t-line">
+            <span class="t-text">إنت مش بس بابا إنت ضهري وسندي وأمان عمري كله</span>
+            <span class="t-emoji">🛡️</span>
+          </div>
+          <div class="t-line">
+            <span class="t-text">تعبك وشقاك طول السنين اللي فاتت هما اللي وصلوني للي أنا فيه</span>
+            <span class="t-emoji">🌟</span>
+          </div>
+          <div class="t-line">
+            <span class="t-text">كل خطوة حلوة بعملها هي ببركة رضاك ودعواتك ليا</span>
+            <span class="t-emoji">🤲</span>
+          </div>
+          <div class="t-line">
+            <span class="t-text">مهما كبرت أو عدت السنين هفضل محتاج لوجودك ونصيحتك </span>
+            <span class="t-emoji">🏡</span>
+          </div>
+          <div class="t-line">
+            <span class="t-text">رضاك عني هو أغلى حاجه في حياتي</span>
+            <span class="t-emoji">👑</span>
+          </div>
+          <div class="t-line">
+            <span class="t-text">بعتذرلك من كل قلبي وبترجاك تسامحني على أي تقصير اوي اي حاجه غلط حصلت مني زعلتك</span>
+            <span class="t-emoji">🙏</span>
+          </div>
+          <div class="t-line">
+            <span class="t-text">واوعدك أكون دايماً عند حسن ظنك وأفرح قلبك بكل خطوة جاية</span>
+            <span class="t-emoji">🤝</span>
+          </div>
+          <div class="t-line">
+            <span class="t-text">ربنا يخليك ليا ويبارك في عمرك وصحتك ويديم ضحكتك منورة بيتنا</span>
+            <span class="t-emoji">✨</span>
+          </div>
+        </div>
+
+        <div class="tablet-footer">
+          <div class="t-sig">
+            <span>ابنك اللي بيحبك وبيعتز بيك دايماً</span>
+            <span>❤️</span>
+          </div>
+          <button class="btn-close" id="closeBtn">إغلاق الرسالة</button>
+        </div>
+      </div>
+
+      <div class="floating-nav-arrow at-start" id="scrollArrow" title="اضغط للتنقل داخل الرسالة">
+        <div class="nav-arrow-top-row">
+          <div class="arrow-badge-icon" id="arrowIcon">↓</div>
+          <div class="arrow-status-text">
+            <span class="arrow-main-label" id="arrowMainLabel">أنت في أول الرسالة</span>
+            <span class="arrow-sub-label" id="arrowSubLabel">انزل بالفأرة للأسفل لقراءة باقي الكلام</span>
+          </div>
+        </div>
+        <div class="scroll-progress-bar">
+          <div class="scroll-progress-fill" id="scrollProgressFill"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 1. إظهار شاشة الباسورد بوضوح بعد الدخلة
+    window.addEventListener('DOMContentLoaded', () => {
+      const backdrop = document.getElementById('introBackdrop');
+      const openingOverlay = document.getElementById('openingOverlay');
+      const passScreen = document.getElementById('passScreen');
+
+      setTimeout(() => {
+        backdrop.classList.add('dawn-glow');
+      }, 600);
+
+      setTimeout(() => {
+        openingOverlay.classList.add('hide');
+      }, 2400);
+
+      setTimeout(() => {
+        openingOverlay.style.display = 'none';
+        passScreen.classList.add('show');
+        document.getElementById('d1').focus();
+      }, 3000);
+    });
+
+    // 2. إدخال الباسورد (دخول بالزر أو Enter فقط)
+    const inputs = [
+      document.getElementById('d1'),
+      document.getElementById('d2'),
+      document.getElementById('d3'),
+      document.getElementById('d4')
+    ];
+
+    inputs.forEach((inp, i) => {
+      inp.addEventListener('input', () => {
+        document.getElementById('err').textContent = '';
+        if (inp.value && i < inputs.length - 1) {
+          inputs[i + 1].focus();
+        }
+      });
+
+      inp.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !inp.value && i > 0) {
+          inputs[i - 1].focus();
+        }
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          verifyPass();
+        }
+      });
+    });
+
+    function verifyPass() {
+      const code = inputs.map(x => x.value).join('');
+      if (code === '0000') {
+        document.getElementById('passScreen').classList.remove('show');
+        document.getElementById('solarCanvas').classList.add('active');
+        document.getElementById('solarBadge').classList.add('show');
+        startRealisticSolarSystem();
+        document.getElementById('vaultScreen').classList.add('show');
+      } else {
+        document.getElementById('err').textContent = 'الباسورد غلط، جرب 0000 ثم اضغط دخول أو Enter';
+        inputs.forEach(x => x.value = '');
+        inputs[0].focus();
+      }
+    }
+
+    document.getElementById('checkBtn').addEventListener('click', verifyPass);
+
+    // 3. توليد خامات واقعية عالية الدقة لكل كوكب والشمس
+    function createPlanetTextures() {
+      const textures = {};
+
+      // أ) خامة الشمس المشتعلة بالبلازما والبقع الشمسية
+      const sunC = document.createElement('canvas');
+      sunC.width = 512; sunC.height = 256;
+      const sCtx = sunC.getContext('2d');
+      const sGrad = sCtx.createLinearGradient(0, 0, 512, 256);
+      sGrad.addColorStop(0, '#ff8c00');
+      sGrad.addColorStop(0.5, '#ffb703');
+      sGrad.addColorStop(1, '#fb5607');
+      sCtx.fillStyle = sGrad;
+      sCtx.fillRect(0, 0, 512, 256);
+      for (let i = 0; i < 420; i++) {
+        const x = Math.random() * 512;
+        const y = Math.random() * 256;
+        const r = Math.random() * 14 + 3;
+        sCtx.fillStyle = Math.random() > 0.35 ? 'rgba(255, 245, 160, 0.38)' : 'rgba(185, 45, 0, 0.36)';
+        sCtx.beginPath();
+        sCtx.arc(x, y, r, 0, Math.PI * 2);
+        sCtx.fill();
+      }
+      textures.sun = sunC;
+
+      // ب) خامة عطارد الصخري المليء بالفوهات
+      const mercC = document.createElement('canvas');
+      mercC.width = 512; mercC.height = 256;
+      const mCtx = mercC.getContext('2d');
+      mCtx.fillStyle = '#8f8b84';
+      mCtx.fillRect(0, 0, 512, 256);
+      for (let i = 0; i < 240; i++) {
+        const x = Math.random() * 512;
+        const y = Math.random() * 256;
+        const r = Math.random() * 11 + 2;
+        mCtx.fillStyle = 'rgba(45, 42, 38, 0.38)';
+        mCtx.beginPath(); mCtx.arc(x, y, r, 0, Math.PI * 2); mCtx.fill();
+        mCtx.strokeStyle = 'rgba(225, 220, 210, 0.28)';
+        mCtx.lineWidth = 1.2;
+        mCtx.beginPath(); mCtx.arc(x - 1, y - 1, r, 0, Math.PI * 2); mCtx.stroke();
+      }
+      textures.mercury = mercC;
+
+      // ج) خامة الزهرة الذهبية الكثيفة
+      const venC = document.createElement('canvas');
+      venC.width = 512; venC.height = 256;
+      const vCtx = venC.getContext('2d');
+      vCtx.fillStyle = '#d99b43';
+      vCtx.fillRect(0, 0, 512, 256);
+      for (let y = 0; y < 256; y += 6) {
+        vCtx.fillStyle = y % 12 === 0 ? 'rgba(255, 232, 175, 0.28)' : 'rgba(138, 76, 18, 0.25)';
+        vCtx.beginPath();
+        vCtx.ellipse(256, y, 280, 9, 0, 0, Math.PI * 2);
+        vCtx.fill();
+      }
+      textures.venus = venC;
+
+      // د) خامة الأرض: محيطات عميقة + قارات خضراء وبنية + غيوم بيضاء كثيفة
+      const earthC = document.createElement('canvas');
+      earthC.width = 640; earthC.height = 320;
+      const eCtx = earthC.getContext('2d');
+      const oceanGrad = eCtx.createLinearGradient(0, 0, 0, 320);
+      oceanGrad.addColorStop(0, '#0d3b7a');
+      oceanGrad.addColorStop(0.5, '#1357b5');
+      oceanGrad.addColorStop(1, '#092c5c');
+      eCtx.fillStyle = oceanGrad;
+      eCtx.fillRect(0, 0, 640, 320);
+
+      const continents = [
+        { x: 110, y: 120, rx: 58, ry: 38, rot: 0.2 },
+        { x: 155, y: 195, rx: 34, ry: 48, rot: -0.15 },
+        { x: 310, y: 110, rx: 68, ry: 34, rot: 0.1 },
+        { x: 335, y: 185, rx: 42, ry: 52, rot: 0.05 },
+        { x: 475, y: 118, rx: 75, ry: 42, rot: -0.1 },
+        { x: 525, y: 215, rx: 35, ry: 24, rot: 0.25 }
+      ];
+      continents.forEach(c => {
+        eCtx.fillStyle = '#388e3c';
+        eCtx.beginPath();
+        eCtx.ellipse(c.x, c.y, c.rx, c.ry, c.rot, 0, Math.PI * 2);
+        eCtx.fill();
+
+        eCtx.fillStyle = '#8d6e63';
+        eCtx.beginPath();
+        eCtx.ellipse(c.x + 8, c.y - 4, c.rx * 0.55, c.ry * 0.45, c.rot, 0, Math.PI * 2);
+        eCtx.fill();
+
+        eCtx.fillStyle = '#66bb6a';
+        eCtx.beginPath();
+        eCtx.ellipse(c.x - 10, c.y + 8, c.rx * 0.6, c.ry * 0.4, c.rot, 0, Math.PI * 2);
+        eCtx.fill();
+      });
+
+      // أغطية قطبية
+      eCtx.fillStyle = 'rgba(245, 250, 255, 0.9)';
+      eCtx.fillRect(0, 0, 640, 22);
+      eCtx.fillRect(0, 298, 640, 22);
+
+      // دوامات السحب البيضاء
+      for (let i = 0; i < 95; i++) {
+        const cx = Math.random() * 640;
+        const cy = 24 + Math.random() * 272;
+        eCtx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+        eCtx.beginPath();
+        eCtx.ellipse(cx, cy, Math.random() * 44 + 14, Math.random() * 8 + 3, (Math.random() - 0.5) * 0.4, 0, Math.PI * 2);
+        eCtx.fill();
+      }
+      textures.earth = earthC;
+
+      // هـ) خامة المريخ الأحمر بتضاريسه الداكنة وقممه الجليدية
+      const marsC = document.createElement('canvas');
+      marsC.width = 512; marsC.height = 256;
+      const rCtx = marsC.getContext('2d');
+      rCtx.fillStyle = '#c44525';
+      rCtx.fillRect(0, 0, 512, 256);
+      for (let i = 0; i < 85; i++) {
+        const x = Math.random() * 512;
+        const y = 20 + Math.random() * 216;
+        rCtx.fillStyle = Math.random() > 0.4 ? 'rgba(82, 22, 10, 0.44)' : 'rgba(235, 132, 92, 0.32)';
+        rCtx.beginPath();
+        rCtx.ellipse(x, y, Math.random() * 34 + 8, Math.random() * 18 + 5, Math.random(), 0, Math.PI * 2);
+        rCtx.fill();
+      }
+      rCtx.fillStyle = 'rgba(250, 245, 242, 0.85)';
+      rCtx.fillRect(0, 0, 512, 16);
+      rCtx.fillRect(0, 240, 512, 16);
+      textures.mars = marsC;
+
+      // و) خامة المشتري: أحزمة سحابية متموجة + البقعة الحمراء العظيمة
+      const jupC = document.createElement('canvas');
+      jupC.width = 640; jupC.height = 320;
+      const jCtx = jupC.getContext('2d');
+      const jBands = [
+        [0, 32, '#8c6d53'],
+        [32, 28, '#e8d7be'],
+        [60, 36, '#b56c3b'],
+        [96, 30, '#f5ebd6'],
+        [126, 42, '#9e4f28'],
+        [168, 34, '#ead8bc'],
+        [202, 44, '#bd7342'],
+        [246, 34, '#e6d3b5'],
+        [280, 40, '#7d5f47']
+      ];
+      jBands.forEach(([y, h, col]) => {
+        jCtx.fillStyle = col;
+        jCtx.fillRect(0, y, 640, h);
+      });
+      // تموجات سحابية ناعمة
+      for (let i = 0; i < 120; i++) {
+        const x = Math.random() * 640;
+        const y = Math.random() * 320;
+        jCtx.fillStyle = Math.random() > 0.5 ? 'rgba(255, 248, 232, 0.22)' : 'rgba(92, 42, 18, 0.22)';
+        jCtx.beginPath();
+        jCtx.ellipse(x, y, Math.random() * 55 + 18, 5, 0, 0, Math.PI * 2);
+        jCtx.fill();
+      }
+      // البقعة الحمراء العظيمة
+      jCtx.fillStyle = '#c94a2b';
+      jCtx.beginPath();
+      jCtx.ellipse(220, 214, 34, 20, 0, 0, Math.PI * 2);
+      jCtx.fill();
+      jCtx.strokeStyle = '#f5dfc1';
+      jCtx.lineWidth = 3;
+      jCtx.beginPath();
+      jCtx.ellipse(220, 214, 38, 23, 0, 0, Math.PI * 2);
+      jCtx.stroke();
+      textures.jupiter = jupC;
+
+      // ز) خامة زحل الذهبية الناعمة
+      const satC = document.createElement('canvas');
+      satC.width = 512; satC.height = 256;
+      const stCtx = satC.getContext('2d');
+      const sBands = [
+        [0, 34, '#9c8354'],
+        [34, 42, '#e8d39e'],
+        [76, 36, '#cbb074'],
+        [112, 46, '#f5e4b8'],
+        [158, 44, '#bfa163'],
+        [202, 54, '#8c7448']
+      ];
+      sBands.forEach(([y, h, col]) => {
+        stCtx.fillStyle = col;
+        stCtx.fillRect(0, y, 512, h);
+      });
+      textures.saturn = satC;
+
+      // ح) خامة أورانوس السماوية الجليدية
+      const uraC = document.createElement('canvas');
+      uraC.width = 512; uraC.height = 256;
+      const uCtx = uraC.getContext('2d');
+      const uGrad = uCtx.createLinearGradient(0, 0, 0, 256);
+      uGrad.addColorStop(0, '#62c4e8');
+      uGrad.addColorStop(0.5, '#8be0ff');
+      uGrad.addColorStop(1, '#4ba8cf');
+      uCtx.fillStyle = uGrad;
+      uCtx.fillRect(0, 0, 512, 256);
+      uCtx.fillStyle = 'rgba(255, 255, 255, 0.14)';
+      uCtx.fillRect(0, 95, 512, 24);
+      textures.uranus = uraC;
+
+      // ط) خامة نبتون الأزرق العميق بعواصفه
+      const nepC = document.createElement('canvas');
+      nepC.width = 512; nepC.height = 256;
+      const nCtx = nepC.getContext('2d');
+      const nGrad = nCtx.createLinearGradient(0, 0, 0, 256);
+      nGrad.addColorStop(0, '#1a388a');
+      nGrad.addColorStop(0.5, '#2955c4');
+      nGrad.addColorStop(1, '#142b6b');
+      nCtx.fillStyle = nGrad;
+      nCtx.fillRect(0, 0, 512, 256);
+      nCtx.fillStyle = 'rgba(13, 28, 74, 0.55)';
+      nCtx.beginPath();
+      nCtx.ellipse(190, 145, 32, 16, 0, 0, Math.PI * 2);
+      nCtx.fill();
+      nCtx.fillStyle = 'rgba(180, 212, 255, 0.35)';
+      nCtx.fillRect(0, 82, 512, 10);
+      nCtx.fillRect(0, 176, 512, 8);
+      textures.neptune = nepC;
+
+      return textures;
+    }
+
+    // دالة رسم كرة كوكب حقيقية باستخدام الخامة المولّدة + دوران + إضاءة وظل ثلاثي الأبعاد
+    function drawTexturedPlanet(targetCtx, cx, cy, radius, texCanvas, spinAngle, lightDirX, lightDirY, atmosphereColor) {
+      targetCtx.save();
+      targetCtx.beginPath();
+      targetCtx.arc(cx, cy, radius, 0, Math.PI * 2);
+      targetCtx.clip();
+
+      const tw = texCanvas.width;
+      const th = texCanvas.height;
+      const drawW = radius * 4;
+      const drawH = radius * 2;
+      const normSpin = ((spinAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+      const offsetX = (normSpin / (Math.PI * 2)) * drawW;
+
+      // رسم الخامة مرتين متجاورتين لدوران سلس بدون انقطاع
+      targetCtx.drawImage(texCanvas, 0, 0, tw, th, cx - radius - offsetX, cy - radius, drawW, drawH);
+      targetCtx.drawImage(texCanvas, 0, 0, tw, th, cx - radius - offsetX + drawW, cy - radius, drawW, drawH);
+
+      // تظليل كروي واقعي حسب اتجاه الشمس لإبراز التجسيم
+      const hlX = cx + lightDirX * radius * 0.42;
+      const hlY = cy + lightDirY * radius * 0.42;
+      const shadeGrad = targetCtx.createRadialGradient(hlX, hlY, radius * 0.12, cx, cy, radius * 1.05);
+      shadeGrad.addColorStop(0, 'rgba(255, 255, 255, 0.14)');
+      shadeGrad.addColorStop(0.55, 'rgba(0, 0, 0, 0.08)');
+      shadeGrad.addColorStop(0.86, 'rgba(0, 0, 0, 0.62)');
+      shadeGrad.addColorStop(1, 'rgba(0, 0, 0, 0.88)');
+      targetCtx.fillStyle = shadeGrad;
+      targetCtx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+
+      // توهج الغلاف الجوي الداخلي
+      if (atmosphereColor) {
+        const atmoGrad = targetCtx.createRadialGradient(cx, cy, radius * 0.82, cx, cy, radius);
+        atmoGrad.addColorStop(0, 'rgba(0,0,0,0)');
+        atmoGrad.addColorStop(1, atmosphereColor);
+        targetCtx.fillStyle = atmoGrad;
+        targetCtx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+      }
+
+      targetCtx.restore();
+    }
+
+    // 4. المجموعة الشمسية الكبيرة الواقعية + لوحة عرض الكوكب الكبير ومعلوماته الفخمة
+    let solarStarted = false;
+
+    function startRealisticSolarSystem() {
+      if (solarStarted) return;
+      solarStarted = true;
+
+      const textures = createPlanetTextures();
+      const canvas = document.getElementById('solarCanvas');
+      const ctx = canvas.getContext('2d');
+
+      const inspectOverlay = document.getElementById('planetInspectOverlay');
+      const spinCanvas = document.getElementById('planetSpinCanvas');
+      const spinCtx = spinCanvas.getContext('2d');
+
+      const planetDot = document.getElementById('planetDot');
+      const planetNameAr = document.getElementById('planetNameAr');
+      const planetOrderTag = document.getElementById('planetOrderTag');
+      const planetDescText = document.getElementById('planetDescText');
+      const planetStatsGrid = document.getElementById('planetStatsGrid');
+      const planetHighlightBox = document.getElementById('planetHighlightBox');
+      const backToSolarBtn = document.getElementById('backToSolarBtn');
+      const vaultScreen = document.getElementById('vaultScreen');
+
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      let isDragging = false;
+      let movedDuringDrag = false;
+      let lastX = 0;
+      let lastY = 0;
+      let rotY = 0;
+      let tiltX = 0.42;
+      let zoom = 1;
+      let targetZoom = 1;
+
+      let selectedPlanet = null;
+      let hoveredPlanet = null;
+
+      let inspectYaw = 0;
+      let inspectPitch = 0.2;
+      let isSpinDragging = false;
+      let spinLastX = 0;
+      let spinLastY = 0;
+
+      const planets = [
+        {
+          id: 'mercury',
+          name: 'عطارد',
+          order: 'الكوكب الأول',
+          dist: 112,
+          r: 15,
+          speed: 0.013,
+          spin: 0,
+          spinSpeed: 0.012,
+          dotLight: '#e0dcd5',
+          dotMid: '#7d7972',
+          angle: 3.3,
+          desc: 'أقرب الكواكب إلى الشمس وأصغرها حجماً، يتميز بسطح صخري قديم مليء بالفوهات النيزكية والمنحدرات الصخرية وتباين هائل في الحرارة.',
+          stats: [
+            { label: 'البعد عن الشمس', val: '57.9 مليون كم' },
+            { label: 'مدة السنة', val: '88 يوماً أرضياً' },
+            { label: 'طول اليوم', val: '58.6 يوم أرضي' },
+            { label: 'عدد الأقمار', val: 'لا يوجد أقمار' }
+          ],
+          highlight: 'رغم قربه الشديد من الشمس، توجد مناطق مظللة دائماً قرب قطبيه يُعتقد بوجود جليد مائي فيها.'
+        },
+        {
+          id: 'venus',
+          name: 'الزهرة',
+          order: 'الكوكب الثاني',
+          dist: 165,
+          r: 21,
+          speed: 0.0098,
+          spin: 1,
+          spinSpeed: -0.008,
+          dotLight: '#fff0c2',
+          dotMid: '#d99b43',
+          angle: 2.9,
+          atmo: 'rgba(255, 210, 125, 0.35)',
+          desc: 'أكثر الكواكب حرارة في المجموعة الشمسية بسبب غلافه الجوي الكثيف من ثاني أكسيد الكربون وسحبه الكبريتية الكثيفة اللامعة.',
+          stats: [
+            { label: 'البعد عن الشمس', val: '108.2 مليون كم' },
+            { label: 'مدة السنة', val: '225 يوماً أرضياً' },
+            { label: 'حرارة السطح', val: 'نحو 465° مئوية' },
+            { label: 'عدد الأقمار', val: 'لا يوجد أقمار' }
+          ],
+          highlight: 'يدور حول محوره ببطء وفي اتجاه معاكس لمعظم الكواكب، بحيث تشرق الشمس فيه من الغرب.'
+        },
+        {
+          id: 'earth',
+          name: 'الأرض',
+          order: 'الكوكب الثالث',
+          dist: 225,
+          r: 24.5,
+          speed: 0.0076,
+          spin: 2,
+          spinSpeed: 0.018,
+          dotLight: '#8ad4ff',
+          dotMid: '#1357b5',
+          angle: 0.35,
+          hasMoon: true,
+          atmo: 'rgba(110, 195, 255, 0.55)',
+          desc: 'كوكبنا الأزرق والوحيد المعروف بوجود الحياة، بفضل المحيطات الواسعة والغلاف الجوي المتوازن والمجال المغناطيسي الحامي.',
+          stats: [
+            { label: 'البعد عن الشمس', val: '149.6 مليون كم' },
+            { label: 'مدة السنة', val: '365.25 يوماً' },
+            { label: 'تغطية المياه', val: 'نحو 71% من السطح' },
+            { label: 'عدد الأقمار', val: 'قمر واحد (القمر)' }
+          ],
+          highlight: 'يُعد الأكبر كثافة بين الكواكب الصخرية، وتعمل طبقاته التكتونية وغلافه الجوي على استقرار مناخه.'
+        },
+        {
+          id: 'mars',
+          name: 'المريخ',
+          order: 'الكوكب الرابع',
+          dist: 282,
+          r: 19.5,
+          speed: 0.0061,
+          spin: 0.5,
+          spinSpeed: 0.017,
+          dotLight: '#ff9b7a',
+          dotMid: '#c44525',
+          angle: 3.15,
+          atmo: 'rgba(255, 130, 90, 0.25)',
+          desc: 'الكوكب الأحمر الغني بأكاسيد الحديد على سطحه، ويضم بركان أوليمبوس العملاق ووديان مارينر الممتدة وقمماً جليدية قطبية.',
+          stats: [
+            { label: 'البعد عن الشمس', val: '227.9 مليون كم' },
+            { label: 'مدة السنة', val: '687 يوماً أرضياً' },
+            { label: 'طول اليوم', val: '24 ساعة و37 دقيقة' },
+            { label: 'عدد الأقمار', val: 'قمران صغيران' }
+          ],
+          highlight: 'يضم أعلى بركان معروف في المجموعة الشمسية (أوليمبوس مونس) الذي يصل ارتفاعه لنحو ثلاثة أضعاف قمة إيفرست.'
+        },
+        {
+          id: 'jupiter',
+          name: 'المشتري',
+          order: 'الكوكب الخامس',
+          dist: 372,
+          r: 44,
+          speed: 0.0038,
+          spin: 1.2,
+          spinSpeed: 0.025,
+          dotLight: '#f5ebd6',
+          dotMid: '#b56c3b',
+          angle: 0.12,
+          desc: 'أكبر كواكب المجموعة الشمسية؛ عملاق غازي هائل تحكمه رياح شديدة وأحزمة سحابية متعددة وعاصفة البقعة الحمراء العظيمة.',
+          stats: [
+            { label: 'البعد عن الشمس', val: '778.5 مليون كم' },
+            { label: 'مدة السنة', val: '11.86 سنة أرضية' },
+            { label: 'طول اليوم', val: 'نحو 9.9 ساعات فقط' },
+            { label: 'عدد الأقمار', val: 'أكثر من 90 قمراً' }
+          ],
+          highlight: 'كتلته أكبر من ضعف كتلة جميع الكواكب الأخرى مجتمعة، ويدور حول نفسه بسرعة مذهلة رغم ضخامته.'
+        },
+        {
+          id: 'saturn',
+          name: 'زحل',
+          order: 'الكوكب السادس',
+          dist: 465,
+          r: 36,
+          speed: 0.0028,
+          spin: 2.3,
+          spinSpeed: 0.022,
+          dotLight: '#f5e4b8',
+          dotMid: '#bfa163',
+          angle: 3.45,
+          ringType: 'saturn',
+          desc: 'جوهرة المجموعة الشمسية بحلقاته العريضة واللامعة المكونة من مليارات القطع الجليدية والصخرية التي تدور حول خط استوائه.',
+          stats: [
+            { label: 'البعد عن الشمس', val: '1.43 مليار كم' },
+            { label: 'مدة السنة', val: '29.45 سنة أرضية' },
+            { label: 'طول اليوم', val: 'نحو 10.7 ساعات' },
+            { label: 'أشهر قمر', val: 'تيتان (له غلاف جوي)' }
+          ],
+          highlight: 'متوسط كثافته أقل من كثافة الماء، وحلقاته تمتد لعرض شاسع مع سُمك رقيق نسبياً.'
+        },
+        {
+          id: 'uranus',
+          name: 'أورانوس',
+          order: 'الكوكب السابع',
+          dist: 548,
+          r: 27,
+          speed: 0.002,
+          spin: 0.8,
+          spinSpeed: 0.015,
+          dotLight: '#b8f0ff',
+          dotMid: '#4ba8cf',
+          angle: 5.95,
+          ringType: 'uranus',
+          atmo: 'rgba(155, 232, 255, 0.35)',
+          desc: 'عملاق جليدي بلون أزرق سماوي هادئ ناتج عن غاز الميثان في طبقته العليا، يتميز بميل محوري استثنائي يجعله يميل على جانبه.',
+          stats: [
+            { label: 'البعد عن الشمس', val: '2.87 مليار كم' },
+            { label: 'مدة السنة', val: '84 سنة أرضية' },
+            { label: 'الميل المحوري', val: 'نحو 98 درجة' },
+            { label: 'عدد الأقمار', val: '28 قمراً معروفاً' }
+          ],
+          highlight: 'يميل محوره بزاوية تقارب 98 درجة، فتبدو حلقاته وكأنها تدور بشكل رأسي تقريباً حول الكوكب.'
+        },
+        {
+          id: 'neptune',
+          name: 'نبتون',
+          order: 'الكوكب الثامن',
+          dist: 625,
+          r: 26,
+          speed: 0.0015,
+          spin: 1.7,
+          spinSpeed: 0.016,
+          dotLight: '#8ab0ff',
+          dotMid: '#2955c4',
+          angle: 2.75,
+          ringType: 'neptune',
+          atmo: 'rgba(95, 150, 255, 0.4)',
+          desc: 'أبعد الكواكب عن الشمس؛ عالم جليدي أزرق عميق تشتهر أجواؤه بعواصف داكنة ورياح هي الأسرع في المجموعة الشمسية.',
+          stats: [
+            { label: 'البعد عن الشمس', val: '4.5 مليار كم' },
+            { label: 'مدة السنة', val: '164.8 سنة أرضية' },
+            { label: 'سرعة الرياح', val: 'تفوق 2000 كم/ساعة' },
+            { label: 'أشهر قمر', val: 'تريتون' }
+          ],
+          highlight: 'كان أول كوكب يُكتشف عبر الحسابات الرياضية قبل رصده مباشرة بالتلسكوب.'
+        }
+      ];
+
+      function openPlanetInspect(planet) {
+        selectedPlanet = planet;
+        inspectYaw = planet.spin || 0;
+        inspectPitch = 0.2;
+
+        planetDot.style.background = `radial-gradient(circle at 30% 30%, ${planet.dotLight}, ${planet.dotMid})`;
+        planetNameAr.textContent = planet.name;
+        planetOrderTag.textContent = planet.order;
+        planetDescText.textContent = planet.desc;
+        planetStatsGrid.innerHTML = planet.stats.map(s => `
+          <div class="planet-stat-box">
+            <span class="planet-stat-label">${s.label}</span>
+            <span class="planet-stat-val">${s.val}</span>
+          </div>
+        `).join('');
+        planetHighlightBox.innerHTML = `<strong>✦ معلومة مميزة:</strong> ${planet.highlight}`;
+
+        inspectOverlay.classList.add('show');
+        vaultScreen.classList.add('hidden-for-focus');
+      }
+
+      function closePlanetInspect() {
+        selectedPlanet = null;
+        inspectOverlay.classList.remove('show');
+        vaultScreen.classList.remove('hidden-for-focus');
+        targetZoom = 1;
+      }
+
+      backToSolarBtn.addEventListener('click', closePlanetInspect);
+
+      spinCanvas.addEventListener('mousedown', (e) => {
+        isSpinDragging = true;
+        spinLastX = e.clientX;
+        spinLastY = e.clientY;
+      });
+
+      spinCanvas.addEventListener('touchstart', (e) => {
+        if (!e.touches.length) return;
+        isSpinDragging = true;
+        spinLastX = e.touches[0].clientX;
+        spinLastY = e.touches[0].clientY;
+      }, { passive: true });
+
+      window.addEventListener('mousemove', (e) => {
+        if (isSpinDragging) {
+          const dx = e.clientX - spinLastX;
+          const dy = e.clientY - spinLastY;
+          spinLastX = e.clientX;
+          spinLastY = e.clientY;
+          inspectYaw += dx * 0.015;
+          inspectPitch = Math.max(-1.1, Math.min(1.1, inspectPitch + dy * 0.012));
+          return;
+        }
+
+        if (!canvas.classList.contains('active') || selectedPlanet) return;
+
+        if (isDragging) {
+          const dx = e.clientX - lastX;
+          const dy = e.clientY - lastY;
+          if (Math.hypot(dx, dy) > 4) movedDuringDrag = true;
+          lastX = e.clientX;
+          lastY = e.clientY;
+          rotY += dx * 0.007;
+          tiltX = Math.max(-1.15, Math.min(1.25, tiltX + dy * 0.005));
+        } else {
+          const hit = getPlanetAtPoint(e.clientX, e.clientY);
+          hoveredPlanet = hit;
+          canvas.classList.toggle('hovering-planet', Boolean(hit));
+        }
+      });
+
+      window.addEventListener('touchmove', (e) => {
+        if (!isSpinDragging || !e.touches.length) return;
+        const dx = e.touches[0].clientX - spinLastX;
+        const dy = e.touches[0].clientY - spinLastY;
+        spinLastX = e.touches[0].clientX;
+        spinLastY = e.touches[0].clientY;
+        inspectYaw += dx * 0.015;
+        inspectPitch = Math.max(-1.1, Math.min(1.1, inspectPitch + dy * 0.012));
+      }, { passive: true });
+
+      window.addEventListener('mouseup', (e) => {
+        isSpinDragging = false;
+        if (!isDragging) return;
+        isDragging = false;
+
+        if (!movedDuringDrag && canvas.classList.contains('active') && !selectedPlanet) {
+          const clicked = getPlanetAtPoint(e.clientX, e.clientY);
+          if (clicked) {
+            openPlanetInspect(clicked);
+          }
+        }
+      });
+
+      window.addEventListener('touchend', () => {
+        isSpinDragging = false;
+      });
+
+      function getPlanetAtPoint(mx, my) {
+        for (let i = planets.length - 1; i >= 0; i--) {
+          const p = planets[i];
+          if (typeof p._screenX !== 'number') continue;
+          const hitRadius = Math.max(p._screenR * 1.25, 24);
+          if (Math.hypot(mx - p._screenX, my - p._screenY) <= hitRadius) {
+            return p;
+          }
+        }
+        return null;
+      }
+
+      canvas.addEventListener('mousedown', (e) => {
+        if (!canvas.classList.contains('active') || selectedPlanet) return;
+        isDragging = true;
+        movedDuringDrag = false;
+        lastX = e.clientX;
+        lastY = e.clientY;
+      });
+
+      canvas.addEventListener('wheel', (e) => {
+        if (!canvas.classList.contains('active') || selectedPlanet) return;
+        targetZoom = Math.max(0.48, Math.min(1.75, targetZoom - e.deltaY * 0.0008));
+      }, { passive: true });
+
+      function drawPlanetRings(targetCtx, px, py, pr, ringType, isFront, extraTilt = 0) {
+        if (!ringType) return;
+        const startA = isFront ? 0 : Math.PI;
+        const endA = isFront ? Math.PI : Math.PI * 2;
+
+        targetCtx.save();
+        targetCtx.translate(px, py);
+
+        if (ringType === 'saturn') {
+          targetCtx.rotate(-0.34 + extraTilt);
+          // حلقة خارجية
+          targetCtx.strokeStyle = isFront ? 'rgba(218, 195, 152, 0.78)' : 'rgba(218, 195, 152, 0.5)';
+          targetCtx.lineWidth = pr * 0.24;
+          targetCtx.beginPath();
+          targetCtx.ellipse(0, 0, pr * 2.25, pr * 0.68, 0, startA, endA);
+          targetCtx.stroke();
+
+          // حلقة داخلية لامعة
+          targetCtx.strokeStyle = isFront ? 'rgba(248, 232, 192, 0.92)' : 'rgba(248, 232, 192, 0.6)';
+          targetCtx.lineWidth = pr * 0.18;
+          targetCtx.beginPath();
+          targetCtx.ellipse(0, 0, pr * 1.75, pr * 0.52, 0, startA, endA);
+          targetCtx.stroke();
+        } else if (ringType === 'uranus') {
+          targetCtx.rotate(-1.35 + extraTilt);
+          targetCtx.strokeStyle = isFront ? 'rgba(195, 240, 255, 0.55)' : 'rgba(195, 240, 255, 0.32)';
+          targetCtx.lineWidth = Math.max(1.8, pr * 0.06);
+          targetCtx.beginPath();
+          targetCtx.ellipse(0, 0, pr * 1.72, pr * 0.42, 0, startA, endA);
+          targetCtx.stroke();
+        } else if (ringType === 'neptune') {
+          targetCtx.rotate(-0.28 + extraTilt);
+          targetCtx.strokeStyle = isFront ? 'rgba(145, 185, 255, 0.36)' : 'rgba(145, 185, 255, 0.2)';
+          targetCtx.lineWidth = Math.max(1.5, pr * 0.05);
+          targetCtx.beginPath();
+          targetCtx.ellipse(0, 0, pr * 1.65, pr * 0.42, 0, startA, endA);
+          targetCtx.stroke();
+        }
+
+        targetCtx.restore();
+      }
+
+      // رسم الكوكب الكبير في لوحة العرض
+      function drawInspectedPlanet3D() {
+        if (!selectedPlanet) return;
+
+        const sw = spinCanvas.width;
+        const sh = spinCanvas.height;
+        const cx = sw / 2;
+        const cy = sh / 2;
+        const radius = selectedPlanet.ringType === 'saturn' ? 112 : 156;
+
+        spinCtx.clearRect(0, 0, sw, sh);
+
+        if (!isSpinDragging) {
+          inspectYaw += 0.008;
+        }
+
+        // هالة توهج ناعمة خلف الكوكب
+        const halo = spinCtx.createRadialGradient(cx, cy, radius * 0.72, cx, cy, radius * 1.48);
+        halo.addColorStop(0, `${selectedPlanet.dotMid}66`);
+        halo.addColorStop(1, 'rgba(0,0,0,0)');
+        spinCtx.fillStyle = halo;
+        spinCtx.beginPath();
+        spinCtx.arc(cx, cy, radius * 1.48, 0, Math.PI * 2);
+        spinCtx.fill();
+
+        drawPlanetRings(spinCtx, cx, cy, radius, selectedPlanet.ringType, false, inspectPitch * 0.35);
+
+        drawTexturedPlanet(
+          spinCtx,
+          cx,
+          cy,
+          radius,
+          textures[selectedPlanet.id],
+          inspectYaw,
+          -0.65,
+          -0.45,
+          selectedPlanet.atmo
+        );
+
+        drawPlanetRings(spinCtx, cx, cy, radius, selectedPlanet.ringType, true, inspectPitch * 0.35);
+      }
+
+      const stars = Array.from({ length: 420 }, () => ({
+        x: (Math.random() - 0.5) * 3200,
+        y: (Math.random() - 0.5) * 3200,
+        r: Math.random() * 2 + 0.4,
+        a: Math.random() * 0.85 + 0.15,
+        twinkleOffset: Math.random() * Math.PI * 2
+      }));
+
+      // حزام الكويكبات الواقعي المتفاوت الأحجام بين المريخ والمشتري
+      const asteroids = Array.from({ length: 240 }, () => ({
+        dist: 325 + (Math.random() - 0.5) * 34,
+        angle: Math.random() * Math.PI * 2,
+        speed: 0.0036 + Math.random() * 0.0022,
+        rx: Math.random() * 3.2 + 1.1,
+        ry: Math.random() * 2.2 + 0.8,
+        rot: Math.random() * Math.PI,
+        shade: Math.floor(110 + Math.random() * 85),
+        ySpread: (Math.random() - 0.5) * 18
+      }));
+
+      let tClock = 0;
+
+      function draw() {
+        tClock += 0.03;
+        ctx.clearRect(0, 0, width, height);
+
+        zoom += (targetZoom - zoom) * 0.1;
+        const cx = width / 2;
+        const cy = height / 2;
+
+        if (!isDragging && !selectedPlanet) {
+          rotY += 0.0018;
+        }
+
+        // 1. النجوم وسديم مجري ناعم في الخلفية
+        const nebula1 = ctx.createRadialGradient(cx - 260 * zoom, cy + 40 * zoom, 10, cx - 260 * zoom, cy + 40 * zoom, 340 * zoom);
+        nebula1.addColorStop(0, 'rgba(130, 95, 70, 0.14)');
+        nebula1.addColorStop(0.5, 'rgba(65, 85, 130, 0.07)');
+        nebula1.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = nebula1;
+        ctx.fillRect(0, 0, width, height);
+
+        const nebula2 = ctx.createRadialGradient(cx + 320 * zoom, cy - 90 * zoom, 10, cx + 320 * zoom, cy - 90 * zoom, 320 * zoom);
+        nebula2.addColorStop(0, 'rgba(70, 120, 185, 0.14)');
+        nebula2.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = nebula2;
+        ctx.fillRect(0, 0, width, height);
+
+        stars.forEach(s => {
+          const twinkle = 0.65 + 0.35 * Math.sin(tClock + s.twinkleOffset);
+          const sx = cx + (s.x + rotY * 180) * zoom;
+          const sy = cy + (s.y + tiltX * 120) * zoom;
+          ctx.fillStyle = `rgba(255, 248, 225, ${s.a * twinkle})`;
+          ctx.beginPath();
+          ctx.arc(sx, sy, s.r * zoom, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // 2. خطوط المدارات الذهبية المتوهجة
+        planets.forEach(p => {
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.scale(zoom, zoom * Math.cos(tiltX));
+          ctx.strokeStyle = 'rgba(244, 208, 120, 0.24)';
+          ctx.lineWidth = 1.3;
+          ctx.beginPath();
+          ctx.arc(0, 0, p.dist, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        });
+
+        // 3. حزام الكويكبات الواقعي
+        asteroids.forEach(a => {
+          a.angle += a.speed;
+          const ax = cx + Math.cos(a.angle + rotY * 0.6) * a.dist * zoom;
+          const ay = cy + (Math.sin(a.angle + rotY * 0.6) * Math.cos(tiltX) * a.dist + a.ySpread * Math.sin(tiltX)) * zoom;
+          ctx.save();
+          ctx.translate(ax, ay);
+          ctx.rotate(a.rot);
+          ctx.fillStyle = `rgba(${a.shade}, ${a.shade - 8}, ${a.shade - 18}, 0.85)`;
+          ctx.beginPath();
+          ctx.ellipse(0, 0, a.rx * zoom, a.ry * zoom, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        });
+
+        // 4. الشمس المشتعلة بتفاصيلها وهالتها
+        const sunRadius = 46 * zoom;
+        const outerCorona = ctx.createRadialGradient(cx, cy, sunRadius * 0.6, cx, cy, sunRadius * 2.6);
+        outerCorona.addColorStop(0, 'rgba(255, 220, 110, 0.92)');
+        outerCorona.addColorStop(0.32, 'rgba(255, 145, 20, 0.45)');
+        outerCorona.addColorStop(0.68, 'rgba(255, 85, 0, 0.14)');
+        outerCorona.addColorStop(1, 'rgba(255, 60, 0, 0)');
+        ctx.fillStyle = outerCorona;
+        ctx.beginPath();
+        ctx.arc(cx, cy, sunRadius * 2.6, 0, Math.PI * 2);
+        ctx.fill();
+
+        drawTexturedPlanet(ctx, cx, cy, sunRadius, textures.sun, tClock * 0.15, 0, 0, 'rgba(255, 230, 120, 0.55)');
+
+        // 5. ترتيب الكواكب حسب العمق (Z-order) لرسمها بشكل ثلاثي الأبعاد سليم
+        const renderList = planets.map(p => {
+          p.angle += p.speed;
+          p.spin += p.spinSpeed;
+          const px = cx + Math.cos(p.angle + rotY) * p.dist * zoom;
+          const py = cy + Math.sin(p.angle + rotY) * p.dist * Math.cos(tiltX) * zoom;
+          const pr = p.r * zoom;
+          p._screenX = px;
+          p._screenY = py;
+          p._screenR = pr;
+          return p;
+        }).sort((a, b) => a._screenY - b._screenY);
+
+        renderList.forEach(p => {
+          const px = p._screenX;
+          const py = p._screenY;
+          const pr = p._screenR;
+
+          const dx = cx - px;
+          const dy = cy - py;
+          const dLen = Math.hypot(dx, dy) || 1;
+          const lx = dx / dLen;
+          const ly = dy / dLen;
+
+          drawPlanetRings(ctx, px, py, pr, p.ringType, false);
+
+          drawTexturedPlanet(ctx, px, py, pr, textures[p.id], p.spin, lx, ly, p.atmo);
+
+          drawPlanetRings(ctx, px, py, pr, p.ringType, true);
+
+          // القمر التابع لكوكب الأرض
+          if (p.hasMoon) {
+            const moonAngle = tClock * 1.4;
+            const mx = px + Math.cos(moonAngle) * (pr + 12 * zoom);
+            const my = py + Math.sin(moonAngle) * (pr * 0.45 + 5 * zoom);
+            const mr = 5.5 * zoom;
+            const mGrad = ctx.createRadialGradient(mx - mr * 0.3, my - mr * 0.3, 1, mx, my, mr);
+            mGrad.addColorStop(0, '#f0f0f0');
+            mGrad.addColorStop(0.6, '#9e9e9e');
+            mGrad.addColorStop(1, '#333333');
+            ctx.fillStyle = mGrad;
+            ctx.beginPath();
+            ctx.arc(mx, my, mr, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          ctx.font = `700 ${Math.max(12, Math.round(14 * zoom))}px Cairo, sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.fillStyle = p === hoveredPlanet ? '#ffd700' : 'rgba(248, 250, 252, 0.9)';
+          ctx.fillText(p.name, px, py - pr - 10);
+        });
+
+        drawInspectedPlanet3D();
+        requestAnimationFrame(draw);
+      }
+
+      draw();
+    }
+
+    // 5. فتح الصندوق والرسالة + شريط/مؤشر السكرول المتحرك
+    const vaultWrap = document.getElementById('vaultWrap');
+    const vaultLock = document.getElementById('vaultLock');
+    const royalTablet = document.getElementById('royalTablet');
+    const scrollArrow = document.getElementById('scrollArrow');
+    const arrowMainLabel = document.getElementById('arrowMainLabel');
+    const arrowSubLabel = document.getElementById('arrowSubLabel');
+    const scrollProgressFill = document.getElementById('scrollProgressFill');
+    let opening = false;
+
+    function updateArrowPositionState() {
+      const scrollTop = royalTablet.scrollTop;
+      const maxScroll = Math.max(1, royalTablet.scrollHeight - royalTablet.clientHeight);
+      const pct = Math.min(100, Math.max(0, Math.round((scrollTop / maxScroll) * 100)));
+      scrollProgressFill.style.width = `${pct}%`;
+
+      if (maxScroll <= 8) {
+        scrollArrow.className = 'floating-nav-arrow at-end';
+        scrollProgressFill.style.width = '100%';
+        arrowMainLabel.textContent = 'الرسالة كاملة أمامك';
+        arrowSubLabel.textContent = 'اضغط للعودة للأعلى';
+        return;
+      }
+
+      if (scrollTop <= 18) {
+        scrollArrow.className = 'floating-nav-arrow at-start';
+        arrowMainLabel.textContent = 'أنت في أول الرسالة';
+        arrowSubLabel.textContent = 'انزل بالفأرة للأسفل لقراءة باقي الكلام';
+      } else if (scrollTop >= maxScroll - 22) {
+        scrollArrow.className = 'floating-nav-arrow at-end';
+        scrollProgressFill.style.width = '100%';
+        arrowMainLabel.textContent = 'أنت في آخر الرسالة';
+        arrowSubLabel.textContent = 'اضغط للرجوع إلى أول الرسالة';
+      } else {
+        scrollArrow.className = 'floating-nav-arrow at-middle';
+        arrowMainLabel.textContent = `منتصف الرسالة (${pct}%)`;
+        arrowSubLabel.textContent = 'كمل نزول للآخر أو اضغط للنزول';
+      }
+    }
+
+    vaultWrap.addEventListener('click', () => {
+      if (opening) return;
+      opening = true;
+      vaultWrap.classList.add('unlocked');
+      vaultLock.textContent = '✨';
+
+      setTimeout(() => {
+        document.getElementById('modal').classList.add('show');
+        royalTablet.scrollTop = 0;
+        setTimeout(updateArrowPositionState, 60);
+        opening = false;
+        vaultWrap.classList.remove('unlocked');
+        vaultLock.textContent = '🔐';
+      }, 550);
+    });
+
+    royalTablet.addEventListener('scroll', updateArrowPositionState);
+    window.addEventListener('resize', updateArrowPositionState);
+
+    scrollArrow.addEventListener('click', () => {
+      if (scrollArrow.classList.contains('at-end')) {
+        royalTablet.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        royalTablet.scrollTo({ top: royalTablet.scrollHeight, behavior: 'smooth' });
+      }
+    });
+
+    document.getElementById('closeBtn').addEventListener('click', () => {
+      document.getElementById('modal').classList.remove('show');
+    });
+  </script>
+</body>
+</html>
